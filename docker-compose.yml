@@ -26,6 +26,9 @@ services:
 
   grafana:
     image: grafana/grafana
+    environment:
+    - GF_SERVER_ROOT_URL=http://47.97.69.138/grafana/
+    - GF_SERVER_SERVE_FROM_SUB_PATH=true
     container_name: grafana
     ports:
       - "3000:3000"
@@ -34,13 +37,16 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     environment:
       - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
     ports:
       - "9200:9200"
+
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.12.0
     ports:
       - "5601:5601"
+
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.12.0
