@@ -1,28 +1,39 @@
-# 🚀 CI/CD DevOps Demo Project
+# 🚀 CI/CD + DevOps Full Stack Project
 
-一个基于 **Flask + Docker + Nginx + Gunicorn + GitHub Actions** 构建的完整 CI/CD 自动化部署项目。
+一个完整的企业级 DevOps 实践项目，涵盖：
 
-该项目实现了从代码提交 → 自动构建 → 自动部署 → 服务更新的完整 DevOps 流水线。
+- CI/CD 自动化部署（GitHub Actions）
+- Docker 容器化部署
+- Nginx 反向代理
+- Flask + Gunicorn Web 服务
+- Prometheus 监控系统
+- Grafana 可视化监控
+- 基础日志与可观测性
 
 ---
 
-# 📌 项目架构
+# 🧱 系统架构
+
 
 本项目采用典型的生产级 Web 架构：
 
 ```
 
-浏览器
+GitHub
+↓ (Push)
+GitHub Actions (CI/CD)
 ↓
-Nginx（反向代理）
+Docker Build + Push (可选 Docker Hub)
 ↓
-Gunicorn（WSGI服务器）
+SSH 自动部署服务器
 ↓
-Flask（业务应用）
+Docker Compose 启动服务
 ↓
-Docker（容器化运行）
-
-````
+Nginx → Flask (Gunicorn)
+↓
+Prometheus 采集 metrics
+↓
+Grafana 可视化监控
 
 ---
 
@@ -35,7 +46,8 @@ Docker（容器化运行）
 - Docker Compose
 - Nginx
 - GitHub Actions（CI/CD）
-- SSH 自动化部署
+- Prometheus
+- Grafana
 
 ---
 
@@ -64,7 +76,46 @@ Docker（容器化运行）
   - git pull
   - docker-compose rebuild
   - 服务自动更新
+# 📊 监控系统（Prometheus）
 
+Flask 暴露 metrics：
+
+
+/metrics
+
+
+指标包括：
+
+- request_count（请求计数）
+- Python GC 状态
+- CPU / 内存使用
+- 进程状态
+
+---
+
+# 📈 Grafana 可视化
+访问：http://<服务器IP>:3000
+默认账号：admin / admin
+
+
+---
+
+# 🌐 服务访问地址
+
+| 服务 | 地址 |
+|------|------|
+| Flask | http://IP:5000 |
+| Prometheus | http://IP:9090 |
+| Grafana | http://IP:3000 |
+
+---
+
+# 🧪 测试方式
+
+修改 Flask：
+
+```python
+return "CI/CD SUCCESS 🚀"
 ---
 
 # 📂 项目结构
