@@ -1,4 +1,4 @@
-name: CI/CD Deploy
+name: CI/CD Docker Hub Pipeline
 
 on:
   push:
@@ -6,7 +6,27 @@ on:
       - main
 
 jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASS }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/devops-app:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/devops-app:latest
+
   deploy:
+    needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +37,7 @@ jobs:
           username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd ~/devops-compose
-            git pull origin main
-            docker-compose down
-            docker-compose up -d --build
+            docker pull ${{ secrets.DOCKER_USER }}/devops-app:latest
+            docker stop devops-app || true
+            docker rm devops-app || true
+            docker run -d -p 80:5000 --name devops-app ${{ secrets.DOCKER_USER }}/devops-app:latest
