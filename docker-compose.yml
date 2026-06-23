@@ -20,9 +20,18 @@ services:
     image: prom/prometheus
     container_name: prometheus
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring-stack/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring-stack/prometheus/rules.yml:/etc/prometheus/rules.yml
     ports:
       - "9090:9090"
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    volumes:
+      - ./monitoring-stack/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
 
   grafana:
     image: grafana/grafana
@@ -32,6 +41,12 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0

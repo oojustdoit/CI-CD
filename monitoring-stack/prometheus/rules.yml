@@ -1,0 +1,30 @@
+groups:
+- name: node-alerts
+  rules:
+
+  # CPU 高负载
+  - alert: CPUHigh
+    expr: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "CPU 使用率超过 80%"
+
+  # 内存不足
+  - alert: MemoryHigh
+    expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) < 0.1
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "内存不足 10%"
+
+  # 磁盘爆满
+  - alert: DiskFull
+    expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.15
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "磁盘空间不足"
